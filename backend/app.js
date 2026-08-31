@@ -1,16 +1,118 @@
 const express = require('express');
 const cors = require('cors');
 
-const config = require('./config/env');
-const healthRoutes = require('./routes/health.routes');
+const config =
+  require('./config/env');
 
-const app = express();
+const {
+  sequelize
+} = require('./models');
 
-app.use(cors({ origin: config.frontendUrl }));
-app.use(express.json());
+const healthRoutes =
+  require('./routes/health.routes');
 
-app.use('/health', healthRoutes);
+const authRoutes =
+  require('./routes/auth.routes');
 
-app.listen(config.port, () => {
-  console.log(`Backend jalan di http://localhost:${config.port}`);
-});
+const productRoutes =
+  require('./routes/product.routes');
+
+const orderRoutes =
+  require('./routes/order.routes');
+
+const dashboardRoutes =
+  require('./routes/dashboard.routes');
+
+const app =
+  express();
+
+app.use(
+  cors({
+    origin: config.frontendUrl,
+    credentials: true
+  })
+);
+
+app.use(
+  express.json()
+);
+
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+);
+
+app.get(
+  '/',
+  (req, res) => {
+    res.json({
+      success: true,
+      message:
+        'Gemini AI E-Commerce API aktif',
+      project:
+        'PENERAPAN GEMINI AI DALAM PEMBUATAN DESKRIPSI PRODUK E-COMMERCE'
+    });
+  }
+);
+
+app.use(
+  '/health',
+  healthRoutes
+);
+
+app.use(
+  '/api/auth',
+  authRoutes
+);
+
+app.use(
+  '/api/products',
+  productRoutes
+);
+
+app.use(
+  '/api/orders',
+  orderRoutes
+);
+
+app.use(
+  '/api/dashboard',
+  dashboardRoutes
+);
+
+async function startServer() {
+  try {
+    await sequelize.authenticate();
+
+    console.log(
+      'PostgreSQL berhasil terhubung'
+    );
+
+    await sequelize.sync();
+
+    console.log(
+      'Database berhasil disinkronkan'
+    );
+
+    app.listen(
+      config.port,
+      () => {
+        console.log(
+          `Backend jalan di http://localhost:${config.port}`
+        );
+      }
+    );
+  } catch (error) {
+    console.error(
+      'GAGAL MENJALANKAN SERVER:',
+      error
+    );
+
+    process.exit(1);
+  }
+}
+
+startServer();
+
+module.exports = app;
