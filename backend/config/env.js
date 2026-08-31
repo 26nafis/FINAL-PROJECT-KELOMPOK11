@@ -1,14 +1,22 @@
 require('dotenv').config();
 
-/**
- * Semua env variable dibaca SEKALI di sini, bukan langsung process.env
- * tersebar di banyak file. Kalo nambah env variable baru, tinggal
- * tambahin di sini, terus import { config } di file yang butuh -
- * gampang dicari ada env apa aja yang dipake project ini.
- */
-const config = {
+module.exports = {
   port: process.env.PORT || 3000,
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
-};
 
-module.exports = config;
+  frontendUrl:
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+
+  databaseUrl: process.env.DATABASE_URL,
+
+  jwtSecret:
+    process.env.JWT_SECRET || 'development-secret',
+
+  jwtExpiresIn:
+    process.env.JWT_EXPIRES_IN || '7d',
+
+  geminiApiKey:
+    process.env.GEMINI_API_KEY,
+
+  telegramBotToken:
+    process.env.TELEGRAM_BOT_TOKEN
+};
