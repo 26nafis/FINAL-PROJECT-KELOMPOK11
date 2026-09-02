@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { apiPost } from '../utils/api'; // pastikan ada apiPost di utils/api.js
+import { apiPost } from '../utils/api';
 
 export function useGenerateDescription() {
   const [loading, setLoading] = useState(false);
@@ -7,15 +7,15 @@ export function useGenerateDescription() {
   const [error, setError] = useState(null);
 
   const generateDescription = async (payload) => {
-    // payload berisi: { name, category, info }
     setLoading(true);
     setError(null);
     try {
-      // Sesuaikan endpoint backend kamu (misal: /api/generate atau /generate-description)
-      const result = await apiPost('/generate-description', payload); 
+      // Ubah endpoint agar sesuai dengan app.js backend (/api/ai/generate-description)
+      const result = await apiPost('/api/ai/generate-description', payload); 
       
-      // Ambil teks hasil generate (sesuaikan struktur JSON dari backend kamu)
-      const generatedText = result.description || result.data;
+      // Ambil teks dari struktur res.json backend: result.data.description
+      const generatedText = result?.data?.description || result?.description || '';
+      
       setDescription(generatedText);
       return generatedText;
     } catch (err) {
