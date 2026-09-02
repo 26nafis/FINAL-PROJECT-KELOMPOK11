@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGenerateDescription } from '../hooks/useGenerateDescription';
 
 const products = [
   {
@@ -57,6 +58,45 @@ function Home() {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [showAI, setShowAI] = useState(false);
   const [productsData, setProductsData] = useState(products);
+
+  // State Form AI Modal
+  const [aiName, setAiName] = useState('');
+  const [aiCategory, setAiCategory] = useState('');
+  const [aiInfo, setAiInfo] = useState('');
+
+  // Custom Hook AI
+  const { generateDescription, description, loading, error, setDescription } =
+    useGenerateDescription();
+
+  // Fungsi saat tombol Generate AI diklik dari tabel/hero
+  const handleOpenAIModal = (product = null) => {
+    if (product) {
+      setAiName(product.name || '');
+      setAiCategory(product.category || '');
+      setAiInfo(product.description || '');
+    } else {
+      setAiName('');
+      setAiCategory('');
+      setAiInfo('');
+    }
+    setDescription(''); // Reset preview sebelumnya
+    setShowAI(true);
+  };
+
+  // Fungsi trigger ke backend
+  const handleGenerateSubmit = async (e) => {
+    e.preventDefault();
+    if (!aiName || !aiInfo) {
+      alert('Nama Produk dan Informasi Produk wajib diisi!');
+      return;
+    }
+
+    await generateDescription({
+      name: aiName,
+      category: aiCategory,
+      info: aiInfo
+    });
+  };
 
   const filteredProducts = productsData.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
@@ -186,7 +226,7 @@ function Home() {
               </p>
 
               <button
-                onClick={() => setShowAI(true)}
+                onClick={() => handleOpenAIModal()}
                 className="mt-5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition shadow-lg shadow-blue-500/20"
               >
                 ✦ Generate Deskripsi AI
@@ -309,7 +349,7 @@ function Home() {
 
                       <td className="px-6 py-4">
                         <button
-                          onClick={() => setShowAI(true)}
+                          onClick={() => handleOpenAIModal(product)}
                           className="text-xs px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 hover:bg-purple-500/20"
                         >
                           ✦ Generate
@@ -404,8 +444,18 @@ function Home() {
           </div>
 
           <div className="space-y-4">
-            <Input label="Nama Produk" placeholder="Kopi Arabica Gayo" />
-            <Input label="Kategori" placeholder="Coffee" />
+            <Input
+              label="Nama Produk"
+              placeholder="Kopi Arabica Gayo"
+              value={aiName}
+              onChange={(e) => setAiName(e.target.value)}
+            />
+            <Input
+              label="Kategori"
+              placeholder="Coffee"
+              value={aiCategory}
+              onChange={(e) => setAiCategory(e.target.value)}
+            />
 
             <div>
               <label className="block text-xs text-gray-400 mb-2">
@@ -415,27 +465,32 @@ function Home() {
               <textarea
                 rows="4"
                 placeholder="Masukkan informasi atau karakteristik produk..."
+                value={aiInfo}
+                onChange={(e) => setAiInfo(e.target.value)}
                 className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-purple-500/50 resize-none"
               />
             </div>
 
             <button
-              onClick={() => setShowAI(false)}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90 rounded-xl py-3 text-sm font-semibold"
+              onClick={handleGenerateSubmit}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90 disabled:opacity-50 rounded-xl py-3 text-sm font-semibold transition"
             >
-              ✦ Generate Deskripsi
+              {loading ? 'Sedang Memproses...' : '✦ Generate Deskripsi'}
             </button>
+
+            {error && (
+              <p className="text-xs text-red-400 mt-1">{error}</p>
+            )}
 
             <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-4">
               <p className="text-xs text-purple-300 mb-2">
                 Preview AI Description
               </p>
 
-              <p className="text-sm text-gray-400 leading-6">
-                Kopi Arabica Gayo merupakan pilihan kopi premium dengan
-                karakter rasa yang seimbang, aroma khas, serta tingkat
-                keasaman lembut. Cocok dinikmati oleh pecinta kopi yang
-                menginginkan pengalaman rasa autentik dan berkualitas.
+              <p className="text-sm text-gray-300 leading-6 whitespace-pre-line">
+                {description ||
+                  'Hasil deskripsi dari AI akan muncul di sini setelah kamu klik tombol Generate.'}
               </p>
             </div>
           </div>
@@ -464,7 +519,7 @@ function StatCard({ title, value, icon, desc }) {
   );
 }
 
-function Input({ label, placeholder, type = 'text' }) {
+function Input({ label, placeholder, type = 'text', value, onChange }) {
   return (
     <div>
       <label className="block text-xs text-gray-400 mb-2">
@@ -474,6 +529,8 @@ function Input({ label, placeholder, type = 'text' }) {
       <input
         type={type}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500/50 placeholder:text-gray-700"
       />
     </div>
