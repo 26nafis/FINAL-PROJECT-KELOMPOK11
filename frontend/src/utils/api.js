@@ -1,17 +1,10 @@
-
 const BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-/**
- * Ambil token login dari localStorage
- */
 function getToken() {
   return localStorage.getItem('token');
 }
 
-/**
- * Membuat headers request
- */
 function getHeaders(hasBody = false) {
   const headers = {};
 
@@ -28,9 +21,6 @@ function getHeaders(hasBody = false) {
   return headers;
 }
 
-/**
- * Memproses response API
- */
 async function handleResponse(response) {
   let result;
 
@@ -51,9 +41,6 @@ async function handleResponse(response) {
   return result;
 }
 
-/**
- * GET
- */
 export async function apiGet(path) {
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'GET',
@@ -63,9 +50,6 @@ export async function apiGet(path) {
   return handleResponse(response);
 }
 
-/**
- * POST
- */
 export async function apiPost(path, body = null) {
   const options = {
     method: 'POST',
@@ -81,9 +65,6 @@ export async function apiPost(path, body = null) {
   return handleResponse(response);
 }
 
-/**
- * PUT
- */
 export async function apiPut(path, body = {}) {
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'PUT',
@@ -94,9 +75,6 @@ export async function apiPut(path, body = {}) {
   return handleResponse(response);
 }
 
-/**
- * PATCH
- */
 export async function apiPatch(path, body = {}) {
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'PATCH',
@@ -107,9 +85,6 @@ export async function apiPatch(path, body = {}) {
   return handleResponse(response);
 }
 
-/**
- * DELETE
- */
 export async function apiDelete(path) {
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'DELETE',
@@ -119,8 +94,31 @@ export async function apiDelete(path) {
   return handleResponse(response);
 }
 
-/**
- * Export BASE URL jika diperlukan
- */
-export { BASE_URL };
+export async function apiUpload(path, file, fieldName = 'image') {
+  const formData = new FormData();
+  formData.append(fieldName, file);
 
+  const token = getToken();
+  const headers = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  return handleResponse(response);
+}
+
+export function resolveImageUrl(imageUrl) {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  return `${BASE_URL}${imageUrl}`;
+}
+
+export { BASE_URL };

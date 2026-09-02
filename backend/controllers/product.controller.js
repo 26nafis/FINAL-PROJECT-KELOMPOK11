@@ -53,7 +53,8 @@ async function createProduct(req, res) {
       category,
       price,
       stock,
-      description
+      description,
+      imageUrl
     } = req.body;
 
     if (!name || !category || price === undefined) {
@@ -69,6 +70,7 @@ async function createProduct(req, res) {
       price,
       stock: stock || 0,
       description: description || null,
+      imageUrl: imageUrl || null,
       aiGenerated: false
     });
 

@@ -39,6 +39,11 @@ const Product = sequelize.define(
     aiGenerated: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   },
   {

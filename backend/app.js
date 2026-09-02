@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const config = require('./config/env');
 const { sequelize } = require('./models');
@@ -11,6 +12,7 @@ const orderRoutes = require('./routes/order.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const aiRoutes = require('./routes/ai.routes');
 const telegramRoutes = require('./routes/telegram.routes');
+const uploadRoutes = require('./routes/upload.routes');
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -32,7 +36,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Routing
 app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -40,6 +43,18 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/telegram', telegramRoutes);
+app.use('/api/upload', uploadRoutes);
+
+app.use((err, req, res, next) => {
+  if (err && err.name === 'MulterError') {
+    return res.status(400).json({ success: false, message: err.message });
+  }
+  if (err) {
+    console.error('UNHANDLED ERROR:', err);
+    return res.status(500).json({ success: false, message: err.message || 'Terjadi kesalahan server' });
+  }
+  next();
+});
 
 async function startServer() {
   try {
