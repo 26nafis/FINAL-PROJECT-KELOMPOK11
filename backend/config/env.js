@@ -18,5 +18,8 @@ module.exports = {
     process.env.GEMINI_API_KEY,
 
   telegramBotToken:
-    process.env.TELEGRAM_BOT_TOKEN
+    process.env.TELEGRAM_BOT_TOKEN,
+
+  adminTelegramChatId:
+    process.env.ADMIN_TELEGRAM_CHAT_ID
 };

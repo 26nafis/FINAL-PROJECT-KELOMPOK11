@@ -2,8 +2,11 @@ const {
   sequelize,
   Product,
   Order,
-  OrderItem
+  OrderItem,
+  User
 } = require('../models');
+
+const telegramService = require('../services/telegram.service');
 
 async function createOrder(req, res) {
   const transaction =
@@ -127,6 +130,10 @@ async function createOrder(req, res) {
         }
       );
 
+    telegramService.notifyNewOrder(createdOrder).catch((err) =>
+      console.error('TELEGRAM NOTIFY ERROR:', err.message)
+    );
+
     res.status(201).json({
       success: true,
       message: 'Pesanan berhasil dibuat',
@@ -155,6 +162,11 @@ async function getOrders(req, res) {
       await Order.findAll({
         where,
         include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name', 'email']
+          },
           {
             model: OrderItem,
             as: 'items',
@@ -197,6 +209,11 @@ async function getOrder(req, res) {
       await Order.findOne({
         where,
         include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name', 'email']
+          },
           {
             model: OrderItem,
             as: 'items',
@@ -265,6 +282,10 @@ async function updateOrderStatus(req, res) {
     await order.update({
       status
     });
+
+    telegramService.notifyOrderStatusChange(order).catch((err) =>
+      console.error('TELEGRAM NOTIFY ERROR:', err.message)
+    );
 
     res.json({
       success: true,

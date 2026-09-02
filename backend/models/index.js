@@ -1,9 +1,9 @@
 const sequelize = require('../config/database');
 
-const User = require('./User');
-const Product = require('./Product');
-const Order = require('./Order');
-const OrderItem = require('./Orderitem');
+const User = require('./user');
+const Product = require('./product');
+const Order = require('./order');
+const OrderItem = require('./orderitem');
 
 User.hasMany(Order, {
   foreignKey: 'userId',

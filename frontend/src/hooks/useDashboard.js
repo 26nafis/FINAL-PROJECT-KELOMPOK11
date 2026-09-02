@@ -1,4 +1,3 @@
-```javascript
 import { useCallback, useEffect, useState } from 'react';
 import { apiGet } from '../utils/api';
 
@@ -18,9 +17,7 @@ export function useDashboard(autoLoad = true) {
     setError(null);
 
     try {
-      const result = await apiGet(
-        '/api/dashboard'
-      );
+      const result = await apiGet('/api/dashboard');
 
       setDashboard(
         result?.data || {
@@ -54,4 +51,3 @@ export function useDashboard(autoLoad = true) {
     refresh: getDashboard,
   };
 }
-```
