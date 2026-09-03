@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
+import ProductThumb from '../components/ProductThumb';
 
 function formatRupiah(value) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
@@ -9,7 +10,7 @@ function formatRupiah(value) {
 
 function ProductDetail() {
   const { id } = useParams();
-  const { getProduct } = useProducts(false); // false = jangan auto-load daftar semua produk
+  const { getProduct } = useProducts(false);
   const { addItem } = useCart();
 
   const [product, setProduct] = useState(null);
@@ -55,8 +56,8 @@ function ProductDetail() {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="aspect-square rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-400/10 border border-white/10 flex items-center justify-center">
-          <span className="text-7xl font-black text-blue-400/60">{product.name.charAt(0).toUpperCase()}</span>
+        <div className="aspect-square rounded-2xl overflow-hidden border border-white/10">
+          <ProductThumb imageUrl={product.imageUrl} name={product.name} className="w-full h-full" />
         </div>
 
         <div>
