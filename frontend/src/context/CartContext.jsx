@@ -3,13 +3,6 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const CartContext = createContext(null);
 const STORAGE_KEY = 'cart';
 
-/**
- * PENTING: backend TIDAK punya endpoint keranjang (gak ada tabel/route
- * cart). POST /api/orders langsung terima array `items` dan langsung
- * jadi Order. Jadi keranjang di sini murni state frontend (disimpan di
- * localStorage biar gak hilang kalau reload), dan "checkout" artinya
- * ngirim seluruh isi keranjang sekali jalan ke POST /api/orders.
- */
 export function CartProvider({ children }) {
   const [items, setItems] = useState(() => {
     try {
@@ -41,6 +34,7 @@ export function CartProvider({ children }) {
           name: product.name,
           price: Number(product.price),
           stock: product.stock,
+          imageUrl: product.imageUrl || null,
           quantity: Math.min(product.stock, quantity),
         },
       ];

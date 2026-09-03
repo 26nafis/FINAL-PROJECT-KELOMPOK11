@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
+import ProductThumb from '../components/ProductThumb';
 
 function formatRupiah(value) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
@@ -69,9 +70,7 @@ function Products() {
               to={`/products/${p.id}`}
               className="border border-white/10 bg-white/[0.02] rounded-2xl overflow-hidden p-3 hover:bg-white/[0.04] hover:-translate-y-1 transition-all"
             >
-              <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-400/10 border border-white/10 flex items-center justify-center">
-                <span className="text-3xl font-black text-blue-400/60">{p.name.charAt(0).toUpperCase()}</span>
-              </div>
+              <ProductThumb imageUrl={p.imageUrl} name={p.name} className="aspect-[4/3] rounded-xl" />
               <div className="pt-3">
                 <span className="text-[11px] text-blue-400">{p.category}</span>
                 <h3 className="text-sm font-semibold mt-0.5 line-clamp-1">{p.name}</h3>

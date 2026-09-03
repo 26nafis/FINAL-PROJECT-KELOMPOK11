@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
+import ProductThumb from '../components/ProductThumb';
 
 function formatRupiah(value) {
   return new Intl.NumberFormat('id-ID', {
@@ -9,23 +10,12 @@ function formatRupiah(value) {
   }).format(value);
 }
 
-function ProductThumb({ name }) {
-  // Belum ada field gambar di model Product, jadi dipakai placeholder
-  // inisial huruf pertama nama produk dengan gradient biru-cyan.
-  return (
-    <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-400/10 border border-white/10 flex items-center justify-center">
-      <span className="text-3xl font-black text-blue-400/60">{name?.charAt(0).toUpperCase()}</span>
-    </div>
-  );
-}
-
 function Home() {
   const { products, loading } = useProducts();
   const featured = products.slice(0, 8);
 
   return (
     <div>
-      {/* HERO */}
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
@@ -47,7 +37,6 @@ function Home() {
         </div>
       </section>
 
-      {/* PRODUK UNGGULAN */}
       <section className="max-w-7xl mx-auto px-5 sm:px-8 py-16">
         <div className="flex items-end justify-between mb-8">
           <div>
@@ -73,7 +62,7 @@ function Home() {
                 to={`/products/${p.id}`}
                 className="border border-white/10 bg-white/[0.02] rounded-2xl overflow-hidden p-3 hover:bg-white/[0.04] hover:-translate-y-1 transition-all"
               >
-                <ProductThumb name={p.name} />
+                <ProductThumb imageUrl={p.imageUrl} name={p.name} className="aspect-[4/3] rounded-xl" />
                 <div className="pt-3">
                   <span className="text-[11px] text-blue-400">{p.category}</span>
                   <h3 className="text-sm font-semibold mt-0.5 line-clamp-1">{p.name}</h3>

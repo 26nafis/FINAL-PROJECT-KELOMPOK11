@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../context/AuthContext';
+import ProductThumb from '../components/ProductThumb';
 
 function formatRupiah(value) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
@@ -21,7 +22,6 @@ function Cart() {
     setError('');
     setSubmitting(true);
     try {
-      // Backend POST /api/orders cuma butuh { items: [{ productId, quantity }] }
       const payload = items.map((i) => ({ productId: i.productId, quantity: i.quantity }));
       const res = await createOrder(payload);
       clear();
@@ -49,8 +49,8 @@ function Cart() {
           <div className="lg:col-span-2 space-y-3">
             {items.map((item) => (
               <div key={item.productId} className="border border-white/10 bg-white/[0.02] rounded-2xl p-4 flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-400/10 border border-white/10 flex items-center justify-center shrink-0">
-                  <span className="font-black text-blue-400/60">{item.name.charAt(0).toUpperCase()}</span>
+                <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                  <ProductThumb imageUrl={item.imageUrl} name={item.name} className="w-full h-full" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{item.name}</p>
